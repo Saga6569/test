@@ -1,3 +1,87 @@
-.hello {
-    color: red;
+thead th {
+    position: -webkit-sticky;
+    /* for Safari */
+    position: sticky;
+    top: 0;
 }
+
+tbody th {
+    position: -webkit-sticky;
+    /* for Safari */
+    position: sticky;
+    left: 0;
+    border: 1px solid #000;
+}
+
+thead th:first-child {
+    left: 0;
+    z-index: 1;
+}
+
+/* Use overflow:scroll on your container to enable scrolling: */
+
+.container {
+    display: flex;
+    width: 100%;
+    height: 80%;
+    justify-content: space-around;
+}
+
+
+/* Use position: sticky to have it stick to the edge
+ * and top, right, or left to choose which edge to stick to: */
+
+thead th {
+    position: -webkit-sticky;
+    /* for Safari */
+    position: sticky;
+    top: 0;
+}
+
+tbody th {
+    position: -webkit-sticky;
+    /* for Safari */
+    position: sticky;
+    left: 0;
+}
+
+
+/* To have the header in the first column stick to the left: */
+
+thead th:first-child {
+    left: 0;
+    z-index: 1;
+}
+
+
+/* Just to display it nicely: */
+
+thead th {
+    background: #000;
+    color: #FFF;
+}
+
+tbody th {
+    background: aqua;
+    border-right: 1px solid black;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+
+
+td,
+th {
+    padding: 0.5em;
+    border: 1px solid black;
+    width: 100px;
+    height: 50px;
+}
+
+td {
+    width: 250px;
+    text-align: center
+}
+

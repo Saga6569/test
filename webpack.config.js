@@ -5,7 +5,6 @@ module.exports = {
     mode: 'development',
     entry: {
         index: './src/index.ts',
-        print: './src/print.ts',
     },
     devtool: 'inline-source-map',
     devServer: {
@@ -18,6 +17,10 @@ module.exports = {
                 use: 'ts-loader',
                 exclude: /node_modules/,
             },
+            {
+                test: /\.css$/i,
+                use: ['style-loader', 'css-loader'],
+            },
         ],
     },
     resolve: {
@@ -25,7 +28,7 @@ module.exports = {
     },
     plugins: [
         new HtmlWebpackPlugin({
-            title: 'Development',
+            template: './index.html',
         }),
     ],
     output: {
@@ -35,13 +38,5 @@ module.exports = {
     },
     optimization: {
         runtimeChunk: 'single',
-    },
-    module: {
-        rules: [
-            {
-                test: /\.css$/i,
-                use: ['style-loader', 'css-loader'],
-            },
-        ],
     },
 };
