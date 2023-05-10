@@ -1,49 +1,69 @@
-export const mouseDown = (e: any, state: any) => {
-  console.log('1')
-  if (e.buttons !== 1) {
-    return
+interface Identifier {
+  [key: string]: string;
+};
+interface Istate {
+  requestStatus: 'progress' | 'successfully' | 'ERROR' | '';
+  arrData: Identifier[];
+  arrDataKeys: string[]
+  drag: any;
+  move: boolean;
+  style: any;
+};
+
+export const onmousedown = (event: MouseEvent, state: Istate, el: HTMLElement, main: HTMLElement, render: Function) => {
+
+  event.stopPropagation()
+  if (event.buttons !== 1) {
+    return;
+  };
+  main.style.userSelect = 'none';
+  const mouseMove = (eMain: MouseEvent) => {
+    if (eMain.buttons !== 1) {
+      return;
+    };
+    state.move = true
+    state.style[el.className].width += eMain.movementX;
+    const newWidth = state.style[el.className].width;
+    el.style.width = `${newWidth}px`;
   }
-  state.move = true;
-  const lineEl = e.target.parentElement.parentElement.parentElement
-  lineEl.removeAttribute('draggable')
-  document.body.style.userSelect = 'none'
-}
+  const handleMouseUp = () => {
+    main.removeEventListener('mousemove', mouseMove, false);
+    main.removeEventListener('mouseup', handleMouseUp, false);
+    main.style.userSelect = '';
+    state.move = false
+    localStorage.setItem("state", JSON.stringify(state));
+    render(state);
+  };
+  main.addEventListener('mousemove', mouseMove);
+  main.addEventListener('mouseup', handleMouseUp);
+};
 
-let value: number
-let key: number
+export const onmousedown2 = (event: MouseEvent, state: Istate, el: HTMLElement, main: HTMLElement, render: Function) => {
+  event.stopPropagation()
+  if (event.buttons !== 1) {
+    return;
+  };
 
-export const mouseMove = (e: any, state: any) => {
-  if (e.buttons !== 1) {
-    return
-  }
-  if (!state.move) {
-    return
-  }
-
-  const cell = e.target.parentElement.parentElement
-  const lineEl = e.target.parentElement.parentElement.parentElement
-
-  if (lineEl.className.startsWith('line')) {
-    const newHeight = state.style[lineEl.className].height + e.movementY;
-    lineEl.style.height = `${newHeight}px`;
-    state.style[lineEl.className].height = newHeight;
-  } else {
-    document.querySelectorAll(`.${cell.className}`).forEach((el: any) => {
-      const newWidth = state.style[cell.className].width + e.movementX;
-      state.style[cell.className].width = newWidth;
-      el.style.width = `${newWidth}px`;
-
-    })
-    value = state.style[cell.className].width;
-    key = cell.className;
-  }
-}
-
-export const mouseUp = (e: any, state: any, render: Function) => {
-  state.move = false;
-  const lineEl = e.target.parentElement.parentElement.parentElement
-  lineEl.setAttribute('draggable', 'true')
-  localStorage.setItem("state", JSON.stringify(state));
-  document.body.style.userSelect = ''
-  render(state);
-}
+  el.removeAttribute('draggable')
+  main.style.userSelect = 'none';
+  const mouseMove = (eMain: MouseEvent) => {
+    state.move = true
+    if (eMain.buttons !== 1) {
+      return;
+    };
+    state.style[el.className].height += eMain.movementY;
+    const newHeight = state.style[el.className].height;
+    el.style.height = `${newHeight}px`;
+  };
+  const handleMouseUp = () => {
+    main.removeEventListener('mousemove', mouseMove, false);
+    main.removeEventListener('mouseup', handleMouseUp, false);
+    main.style.userSelect = '';
+    el.setAttribute('draggable', 'true');
+    state.move = false
+    localStorage.setItem("state", JSON.stringify(state));
+    render(state);
+  };
+  main.addEventListener('mousemove', mouseMove);
+  main.addEventListener('mouseup', handleMouseUp);
+};

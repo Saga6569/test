@@ -6,7 +6,7 @@ interface Istate {
   requestStatus: 'progress' | 'successfully' | 'ERROR' | '';
   arrData: Identifier[];
   arrDataKeys: string[]
-  darag: any;
+  drag: any;
 };
 
 const load: HTMLElement = document.querySelector('.preloader');
@@ -38,7 +38,6 @@ const dataRequest = async (state: Istate) => {
 
   const count = state.arrData.length === 0 ? 5 : state.arrData.length + 1 === 17 ? state.arrData.length + 2 : state.arrData.length + 1
 
-  console.log(countIni, count)
   state.requestStatus = 'progress';
   preloader(state.requestStatus);
   const arrData: Identifier[] = [];

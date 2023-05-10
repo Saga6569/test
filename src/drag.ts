@@ -1,59 +1,72 @@
-
-
-let clonEl: HTMLElement;
-
-export const dragStart = (e: any, state: any) => {
-  if (state.move) {
-    return;
-  }
-  clonEl = e.target.cloneNode(true) as HTMLElement;
-  document.querySelector('.table').append(clonEl);
-  state.darag = e.target.id;
-  e.dataTransfer.setDragImage(new Image(), 10, 10);
-  e.target.style.opacity = '0.1';
+interface Identifier {
+  [key: string]: string;
 };
 
-export const dragMove = (e: any, state: any) => {
-  if (state.move) {
-    return;
-  }
-  const el: HTMLElement = e.target;
-  clonEl.style.position = 'absolute';
-  clonEl.style.pointerEvents = 'none';
-  if (e.pageX === 0 && e.pageY === 0) {
+interface Istate {
+  requestStatus: 'progress' | 'successfully' | 'ERROR' | '';
+  arrData: Identifier[];
+  arrDataKeys: string[]
+  drag: any;
+  move: boolean;
+  style: any;
+};
+
+let acc: number = 0;
+
+export const onmousedown3 = (event: any, state: Istate, line: HTMLElement, main: HTMLElement, render: Function, reorder: Function) => {
+  if (event.buttons !== 1) {
     return;
   };
-  clonEl.style.top = `${e.pageY - 20}px`;
-}
-
-export const dragEnter = (e: any, state: any, reorder: Function) => {
-  if (state.move) {
-    return;
-  }
-  const idTarget = e.target.parentElement.id
-  if (idTarget === state.darag) {
+  if (event.target.className === 'buttonClose') {
     return;
   };
-
-  e.target.parentElement.style.backgroundColor = 'gray';
-  const res = reorder(idTarget, state);
-  state.arrData = res;
-};
-
-export const dragLeave = (e: any, state: any) => {
-  if (state.move) {
-    return;
+  if (state.move){
+    return
   }
-  e.target.parentElement.style.backgroundColor = '';
-};
+
+  console.log('121')
+
+  const dragOld = state.drag
+  event.stopPropagation()
 
 
-export const dragEnd = (e: any, state: any, render: Function) => {
-  if (state.move) {
-    return;
+  line.style.position = 'relative';
+  line.style.pointerEvents = 'none';
+  line.style.opacity = '0.2'
+  line.childNodes.forEach((el: HTMLElement) => el.style.pointerEvents = 'none')
+  main.style.userSelect = 'none';
+
+  acc = 0;
+  line.style.top = `${acc}px`;
+  const mouseMove = (eMain: MouseEvent) => {
+    if (eMain.buttons !== 1) {
+      return;
+    };
+    acc += eMain.movementY;
+    line.style.top = `${acc}px`;
   }
-  clonEl.remove();
-  e.target.style.opacity = '1';
-  document.getElementById(state.darag).style.backgroundColor = '';
-  render(state);
-}
+
+  const handleMouseUp = (e: any) => {
+
+    main.removeEventListener('mousemove', mouseMove, false);
+    main.removeEventListener('mouseup', handleMouseUp, false);
+    main.style.userSelect = '';
+
+
+    if (state.drag !== dragOld || state.drag !== '') {
+      state.arrData = reorder(state.drag, state, line.id);
+      localStorage.setItem("state", JSON.stringify(state));
+      render(state);
+    };
+
+    line.style.position = '';
+    line.style.pointerEvents = '';
+    main.style.userSelect = '';
+    line.style.opacity = '1'
+    line.childNodes.forEach((el: HTMLElement) => el.style.pointerEvents = '')
+    state.drag = ''
+  };
+
+  main.addEventListener('mousemove', mouseMove);
+  main.addEventListener('mouseup', handleMouseUp);
+};

@@ -1,6 +1,12 @@
-/* * {
-  user-select: none;
-} */
+.heder {
+  position: sticky;
+  top: 0;
+  background-color: antiquewhite;
+}
+
+tr {
+  z-index: 99;
+}
 
 th,
 td {
@@ -9,8 +15,12 @@ td {
 
 .container {
   transition: 2s;
+  height: 800px;
+  position: absolute;
+  left: 10%;
+  top: 10%;
+  user-select: none;
 }
-
 
 .preloader {
   width: 350px;
@@ -102,6 +112,8 @@ td {
 th,
 td {
   position: relative;
+  text-align: center;
+  padding-top: 1%;
 }
 
 .siz:hover {
@@ -109,8 +121,24 @@ td {
   transition: 1.5s;
 }
 
-.button-items{
+.button-items {
   position: absolute;
   bottom: 25px;
   left: 45%;
+}
+
+.buttonClose {
+  background-color: transparent;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  color: red;
+  font-size: 10px;
+  z-index:  99;
+}
+
+.buttonSort{
+  z-index: 99;
+  position: relative;
+  width: 20px;
 }
