@@ -1,18 +1,17 @@
-import * as _ from 'lodash';
 import './style.css';
 import dataRequest from './request';
-import { onmousedown3 } from './drag'
-import { onmousedown, onmousedown2 } from './resize'
+import  onMouseDragAndDrop  from './drag'
+import { mouseResizeWidth, mouseResizeHeight } from './resize'
 
-interface Identifier {
+interface IarrData {
   [key: string]: string;
 };
 
 interface Istate {
   requestStatus: 'progress' | 'successfully' | 'ERROR' | '';
-  arrData: Identifier[];
-  arrDataKeys: string[]
-  drag: any;
+  arrData: IarrData[];
+  arrDataKeys: string[];
+  drag: string | any;
   move: boolean;
   style: any;
 };
@@ -33,20 +32,20 @@ const state: Istate = {
   style: {},
 };
 
-const numberSort = ['id', 'height', 'mass']
-const dateSort = ['created', 'edited',]
+const keyNumber = ['id', 'height', 'mass'];
+const kyeDate = ['created', 'edited'];
 
 const buttonSort = (el: HTMLElement, key: string) => {
   const button = document.createElement('div');
   button.innerText = '↓';
   button.className = 'buttonSort';
 
-  button.addEventListener('click', (e) => {
-    e.stopPropagation()
-    if (numberSort.includes(key)) {
-      state.arrData.sort((a: Identifier, b: Identifier) => Number(a[key]) - Number(b[key]))
-    } else if (dateSort.includes(key)) {
-      state.arrData.sort((a: Identifier, b: Identifier) => Date.parse(a[key]) - Date.parse(b[key]))
+  button.addEventListener('click', (e: Event) => {
+    e.stopPropagation();
+    if (keyNumber.includes(key)) {
+      state.arrData.sort((a: IarrData, b: IarrData) => Number(a[key]) - Number(b[key]));
+    } else if (kyeDate.includes(key)) {
+      state.arrData.sort((a: IarrData, b: IarrData) => Date.parse(a[key]) - Date.parse(b[key]));
     } else {
       state.arrData.sort((a, b) => {
         if (a[key].toLowerCase() < b[key].toLowerCase()) {
@@ -57,23 +56,21 @@ const buttonSort = (el: HTMLElement, key: string) => {
         }
         return 0;
       });
-
-    }
+    };
     localStorage.setItem("state", JSON.stringify(state));
     render(state);
   });
   el.append(button);
 };
 
-
 const buttonClose = (el: HTMLElement, id: string) => {
   const button = document.createElement('div');
   button.innerText = 'X';
   button.className = 'buttonClose';
 
-  button.addEventListener('click', (e) => {
-    e.stopPropagation()
-    const newArrData = (state.arrData).filter((el: Identifier) => el.id !== id);
+  button.addEventListener('click', (e: Event) => {
+    e.stopPropagation();
+    const newArrData = (state.arrData).filter((el: IarrData) => el.id !== id);
     state.arrData = newArrData;
     localStorage.setItem("state", JSON.stringify(state));
     render(state);
@@ -121,10 +118,11 @@ const plug: HTMLElement = document.querySelector('.plug');
 const defaltWidthCell = 100;
 const defaltHeightCell = 50;
 
-const render = (state: Istate, drag = true) => {
+const render = (state: Istate) => {
 
+  console.log(state)
 
-  const container: HTMLElement = document.querySelector('.container')
+  const container: HTMLElement = document.querySelector('.container');
   document.querySelector('.table')?.remove();
   if (state.arrData.length === 0) {
     plug.style.display = '';
@@ -141,20 +139,19 @@ const render = (state: Istate, drag = true) => {
   const keys = state.arrDataKeys;
 
   const trHeder = document.createElement('tr');
-  trHeder.className = 'heder'
+  trHeder.className = 'heder';
 
   keys.forEach((key: string, i: number) => {
-    const th = document.createElement('th')
-    const className = `cell_${i}`
-    th.className = className
-
+    const th = document.createElement('th');
+    const className = `cell_${i}`;
+    th.className = className;
 
     if (!(state.style).hasOwnProperty(className)) {
-      state.style[className] = { width: defaltWidthCell, Height: defaltHeightCell }
-    }
+      state.style[className] = { width: defaltWidthCell, Height: defaltHeightCell };
+    };
 
-    const width = state.style[className].width
-    const height = state.style[className].height
+    const width = state.style[className].width;
+    const height = state.style[className].height;
 
     th.style.width = `${width}px`;
     th.style.height = `${height}px`;
@@ -162,12 +159,11 @@ const render = (state: Istate, drag = true) => {
     buttonSort(th, key)
 
     trHeder.append(th);
-    th.querySelector('polygon').addEventListener('mousedown', (e) => onmousedown(e, state, th, container, render))
+    th.querySelector('polygon').addEventListener('mousedown', (e) => mouseResizeWidth(e, state, th, container, render));
   });
 
   table.append(trHeder);
-  console.log(arrData)
-  arrData.forEach((el: Identifier, i: number) => {
+  arrData.forEach((el: IarrData, i: number) => {
     const trLine = document.createElement('tr');
     const className = `line_${i}`;
     trLine.className = className;
@@ -181,37 +177,35 @@ const render = (state: Istate, drag = true) => {
         trLine.id = el[key];
       };
       const td = document.createElement('td');
-      td.className = `cell_${i}`
+      td.className = `cell_${i}`;
       td.innerText = el[key];
       if (i === 0) {
         td.innerHTML = svg(el[key]);
         buttonClose(td, el.id);
-        td.querySelector('polygon').addEventListener('mousedown', (e) => onmousedown2(e, state, trLine, container, render))
+        td.querySelector('polygon').addEventListener('mousedown', (e) => mouseResizeHeight(e, state, trLine, container, render));
       };
       trLine.append(td);
     });
     table.append(trLine);
-    trLine.addEventListener('mousedown', (e) => onmousedown3(e, state, trLine, container, render, reorder))
+    trLine.addEventListener('mousedown', (e) => onMouseDragAndDrop(e, state, trLine, container, render, reorder));
     trLine.addEventListener('mouseover', (e) => {
-      e.stopPropagation()
+      e.stopPropagation();
       if (e.buttons !== 1 || state.move) {
-        return
-      }
-      trLine.style.backgroundColor = '#215dbf'
-      state.drag = trLine.id
-    })
+        return;
+      };
+      trLine.style.backgroundColor = '#215dbf';
+      state.drag = trLine.id;
+    });
     trLine.addEventListener('mouseout', (e) => {
       if (e.buttons !== 1 || state.move) {
-        return
+        return;
       }
-      trLine.style.backgroundColor = ''
-      state.drag = ''
-    })
-
-
+      trLine.style.backgroundColor = '';
+      state.drag = '';
+    });
   });
 
-  const addData = document.createElement('button')
+  const addData = document.createElement('button');
   addData.innerText = 'add';
 
   addData.addEventListener('click', async (e) => {
@@ -242,7 +236,6 @@ const onClick = async () => {
       return;
     };
   };
-
   render(state);
 };
 
@@ -252,25 +245,21 @@ const onClickRes = async () => {
   state.arrData = [];
   state.arrDataKeys = [];
   buttondDownload.removeAttribute('disabled');
-  state.style = {}
-  render(state, false);
+  state.style = {};
+  render(state);
 };
 
 const app = async () => {
   buttondDownload.addEventListener('click', onClick);
   buttondReset.addEventListener('click', onClickRes);
-
   const localStorageState: Istate = JSON.parse(localStorage.getItem('state'));
-
   if (localStorageState !== null) {
     const keys: string[] = Object.keys(localStorageState);
-
     for (const key of keys as (keyof Istate)[]) {
       state[key] = localStorageState[key];
     };
     buttondDownload.setAttribute('disabled', 'true');
   };
-
   render(state);
 };
 

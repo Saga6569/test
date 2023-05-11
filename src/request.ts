@@ -1,12 +1,12 @@
 
-interface Identifier {
+interface IarrData {
   [key: string]: string | number
 }
 interface Istate {
   requestStatus: 'progress' | 'successfully' | 'ERROR' | '';
-  arrData: Identifier[];
+  arrData: IarrData[];
   arrDataKeys: string[]
-  drag: any;
+  drag: string;
 };
 
 const load: HTMLElement = document.querySelector('.preloader');
@@ -16,7 +16,7 @@ const preloader = (requestStatus: string) => {
   load.className = newClassName;
 }
 
-const getdata = async (url: string) => {
+const getData = async (url: string) => {
   try {
     const response = await fetch(url);
     if (response.status !== 200) {
@@ -25,7 +25,7 @@ const getdata = async (url: string) => {
     if (response === undefined) {
       return { status: 'ERROR', value: 'ошибка сети' };
     };
-    let json = await response.json();
+    const json = await response.json();
     return json;
   } catch (error) {
     console.log(error);
@@ -34,16 +34,16 @@ const getdata = async (url: string) => {
 };
 
 const dataRequest = async (state: Istate) => {
-  const countIni = state.arrData.length + 1 === 17 ? state.arrData.length + 2 : state.arrData.length + 1
+  const countIni = state.arrData.length + 1 === 17 ? state.arrData.length + 2 : state.arrData.length + 1;
 
-  const count = state.arrData.length === 0 ? 5 : state.arrData.length + 1 === 17 ? state.arrData.length + 2 : state.arrData.length + 1
+  const count = state.arrData.length === 0 ? 5 : state.arrData.length + 1 === 17 ? state.arrData.length + 2 : state.arrData.length + 1;
 
   state.requestStatus = 'progress';
   preloader(state.requestStatus);
-  const arrData: Identifier[] = [];
+
   for (let i = countIni; i <= count; i++) {
     const newUrl = `https://swapi.dev/api/people/${String(i)}/`;
-    const res: Identifier = await getdata(newUrl);
+    const res: IarrData = await getData(newUrl);
     if (res.status === 'ERROR') {
       state.requestStatus = 'ERROR';
       preloader(state.requestStatus);
@@ -51,21 +51,20 @@ const dataRequest = async (state: Istate) => {
     };
 
     const keys = Object.keys(res);
-    const newDate: Identifier = {};
+    const newData: IarrData = {};
 
     keys.forEach((key: string) => {
       if (!Array.isArray(res[key]) && key !== 'homeworld') {
-        newDate[key] = res[key];
+        newData[key] = res[key];
       };
-      newDate.id = String(i);
+      newData.id = String(i);
     });
-    state.arrData.push(newDate);
+    state.arrData.push(newData);
   };
   state.requestStatus = 'successfully';
-  preloader(state.requestStatus);
-  setTimeout(() => {
-    preloader('preloader');
-  }, 2000);
+
+   preloader('preloader');
+
   state.arrDataKeys = Object.keys(state.arrData[0]);
 
   localStorage.setItem("state", JSON.stringify(state));
