@@ -39,15 +39,14 @@ td {
   top: 40%;
   left: 40%;
   border-radius: 200px;
-  animation: moving 2s infinite linear;
+  animation: moving 3s infinite linear;
   z-index: 99;
 }
 
 @keyframes moving {
   50% {
-    transform: scale(0.5, 0.5);
+    transform: scale(0.3, 0.3);
   }
-
   100% {
     transform: scale(1, 1);
   }
@@ -72,7 +71,6 @@ td {
   50% {
     opacity: 1;
   }
-
   100% {
     opacity: 0;
   }
@@ -112,6 +110,7 @@ td {
   display: flex;
   align-items: center;
   justify-content: center;
+  border-radius: 65px;
 }
 
 .dragSlider {
@@ -199,3 +198,6 @@ button {
   background-color: #7bfc03;
 }
 
+.reset {
+  background-color: red;
+}

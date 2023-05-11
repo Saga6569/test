@@ -1,7 +1,7 @@
 import './style.css';
 import dataRequest from './request';
-import onMouseDragAndDrop from './drag'
-import { mouseResizeWidth, mouseResizeHeight } from './resize'
+import onMouseDragAndDrop from './drag';
+import { mouseResizeWidth, mouseResizeHeight } from './resize';
 
 interface IarrData {
   [key: string]: string;
@@ -119,8 +119,7 @@ const defaltWidthCell = 100;
 const defaltHeightCell = 50;
 
 const render = (state: Istate) => {
-
-  console.log(state)
+  console.log(state);
 
   const container: HTMLElement = document.querySelector('.container');
   document.querySelector('.table')?.remove();
@@ -233,13 +232,18 @@ const render = (state: Istate) => {
 
 const onClickRequest = async () => {
   buttondDownload.setAttribute('disabled', 'true');
+  buttondReset.setAttribute('disabled', 'true');
   if (state.arrData.length === 0) {
     await dataRequest(state);
     if (state.requestStatus === 'ERROR') {
+      buttondReset.removeAttribute('disabled');
+      buttondDownload.removeAttribute('disabled');
+      plug.innerText = 'Повторите попытку'
       return;
     };
   };
   render(state);
+  buttondReset.removeAttribute('disabled');
 };
 
 const onClickRes = async () => {
