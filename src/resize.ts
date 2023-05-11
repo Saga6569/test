@@ -13,20 +13,25 @@ interface Istate {
 let acc: number;
 
 export const mouseResizeWidth = (event: MouseEvent, state: Istate, el: HTMLElement, main: HTMLElement, render: Function) => {
-  event.stopPropagation()
+  // event.stopPropagation()
   if (event.buttons !== 1) {
     return;
   };
   main.style.userSelect = 'none';
   acc = 0;
 
+  if (state.style[el.className].width < el.clientWidth) {
+    state.style[el.className].width = el.clientWidth
+  }
+
   const mouseMove = (eMain: MouseEvent) => {
     if (eMain.buttons !== 1) {
       return;
     };
     state.move = true
-    state.style[el.className].width += eMain.movementX;
-    acc = state.style[el.className].width;
+
+    acc = eMain.movementX;
+    state.style[el.className].width += eMain.movementX
     el.style.width = `${state.style[el.className].width}px`;
   };
 
@@ -40,6 +45,11 @@ export const mouseResizeWidth = (event: MouseEvent, state: Istate, el: HTMLEleme
     if (acc === 0) {
       return;
     };
+
+    if (state.style[el.className].width < el.clientWidth) {
+      state.style[el.className].width = el.clientWidth
+    }
+
     render(state);
   };
   main.addEventListener('mousemove', mouseMove);
@@ -55,6 +65,11 @@ export const mouseResizeHeight = (event: MouseEvent, state: Istate, el: HTMLElem
   el.removeAttribute('draggable')
   main.style.userSelect = 'none';
   acc = 0
+
+  if (state.style[el.className].height < el.clientHeight) {
+    state.style[el.className].height = el.clientHeight
+  }
+
   const mouseMove = (eMain: MouseEvent) => {
     state.move = true
     if (eMain.buttons !== 1) {
@@ -74,6 +89,9 @@ export const mouseResizeHeight = (event: MouseEvent, state: Istate, el: HTMLElem
     localStorage.setItem("state", JSON.stringify(state));
     if (acc === 0) {
       return;
+    }
+    if (state.style[el.className].height < el.clientHeight) {
+      state.style[el.className].height = el.clientHeight
     }
     render(state);
   };

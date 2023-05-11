@@ -36,7 +36,7 @@ const getData = async (url: string) => {
 const dataRequest = async (state: Istate) => {
   const countIni = state.arrData.length + 1 === 17 ? state.arrData.length + 2 : state.arrData.length + 1;
 
-  const count = state.arrData.length === 0 ? 5 : state.arrData.length + 1 === 17 ? state.arrData.length + 2 : state.arrData.length + 1;
+  const count = state.arrData.length === 0 ? 10 : state.arrData.length + 1 === 17 ? state.arrData.length + 2 : state.arrData.length + 1;
 
   state.requestStatus = 'progress';
   preloader(state.requestStatus);

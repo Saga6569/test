@@ -194,6 +194,7 @@ const render = (state: Istate) => {
         return;
       };
       trLine.style.backgroundColor = '#215dbf';
+      trLine.style.cursor = 'grab'
       state.drag = trLine.id;
     });
     trLine.addEventListener('mouseout', (e) => {
@@ -202,11 +203,13 @@ const render = (state: Istate) => {
       }
       trLine.style.backgroundColor = '';
       state.drag = '';
+      trLine.style.cursor = '';
     });
   });
 
   const addData = document.createElement('button');
   addData.innerText = 'add';
+  addData.className = 'add';
 
   addData.addEventListener('click', async (e) => {
     addData.setAttribute('disabled', 'true');
@@ -228,7 +231,7 @@ const render = (state: Istate) => {
   plug.style.display = 'none';
 };
 
-const onClick = async () => {
+const onClickRequest = async () => {
   buttondDownload.setAttribute('disabled', 'true');
   if (state.arrData.length === 0) {
     await dataRequest(state);
@@ -250,7 +253,7 @@ const onClickRes = async () => {
 };
 
 const app = async () => {
-  buttondDownload.addEventListener('click', onClick);
+  buttondDownload.addEventListener('click', onClickRequest);
   buttondReset.addEventListener('click', onClickRes);
   const localStorageState: Istate = JSON.parse(localStorage.getItem('state'));
   if (localStorageState !== null) {

@@ -22,8 +22,6 @@ const onMouseDragAndDrop = (event: any, state: Istate, line: HTMLElement, main: 
     return;
   };
 
-  console.log(line)
-
   const dragOld = state.drag;
   event.stopPropagation();
 
@@ -43,7 +41,6 @@ const onMouseDragAndDrop = (event: any, state: Istate, line: HTMLElement, main: 
   };
 
   const handleMouseUp = (e: any) => {
-    console.log(e.target)
     main.removeEventListener('mousemove', mouseMove, false);
     main.removeEventListener('mouseup', handleMouseUp, false);
     main.style.userSelect = '';
