@@ -8,3 +8,4 @@
 
 Использованное API https://swapi.dev/
 
+Ссылка на развернутое приложение https://test-dq79wvgl6-aristov6569-gmailcom.vercel.app/
