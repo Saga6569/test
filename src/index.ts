@@ -1,6 +1,6 @@
 import './style.css';
 import dataRequest from './request';
-import  onMouseDragAndDrop  from './drag'
+import onMouseDragAndDrop from './drag'
 import { mouseResizeWidth, mouseResizeHeight } from './resize'
 
 interface IarrData {

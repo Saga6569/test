@@ -22,13 +22,14 @@ const onMouseDragAndDrop = (event: any, state: Istate, line: HTMLElement, main: 
     return;
   };
 
+  console.log(line)
+
   const dragOld = state.drag;
   event.stopPropagation();
 
   line.style.position = 'relative';
   line.style.pointerEvents = 'none';
   line.style.opacity = '0.2'
-  // line.childNodes.forEach((el: HTMLElement) => el.style.pointerEvents = 'none');
   main.style.userSelect = 'none';
 
   let acc: number = 0;
@@ -41,8 +42,8 @@ const onMouseDragAndDrop = (event: any, state: Istate, line: HTMLElement, main: 
     line.style.top = `${acc}px`;
   };
 
-  const handleMouseUp = () => {
-
+  const handleMouseUp = (e: any) => {
+    console.log(e.target)
     main.removeEventListener('mousemove', mouseMove, false);
     main.removeEventListener('mouseup', handleMouseUp, false);
     main.style.userSelect = '';

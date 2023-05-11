@@ -63,7 +63,7 @@ const dataRequest = async (state: Istate) => {
   };
   state.requestStatus = 'successfully';
 
-   preloader('preloader');
+  preloader('successfully');
 
   state.arrDataKeys = Object.keys(state.arrData[0]);
 
