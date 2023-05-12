@@ -14,6 +14,7 @@ interface Istate {
   drag: string | any;
   move: boolean;
   style: any;
+  paping: any
 };
 
 const svg = (text: string) => `${text}<svg class='siz' width="20" height="20">
@@ -30,6 +31,7 @@ const state: Istate = {
   drag: '',
   move: false,
   style: {},
+  paping: 1,
 };
 
 const keyNumber = ['id', 'height', 'mass'];
@@ -118,11 +120,27 @@ const plug: HTMLElement = document.querySelector('.plug');
 const defaltWidthCell = 100;
 const defaltHeightCell = 50;
 
+
 const render = (state: Istate) => {
   console.log(state);
 
+  const num = 10 // Количество от рисованных элементов в таблице
+
+  const l = state.arrData.length;
+  const res = [];
+  for (let i = 1; i <= l; i++) {
+    if (i % num === 0) {
+      res.push(i);
+    };
+  };
+
+  if (state.arrData.length % num !== 0) {
+    res.push(res.at(-1) + 1)
+  }
+
   const container: HTMLElement = document.querySelector('.container');
   document.querySelector('.table')?.remove();
+  document.querySelector('.paping')?.remove();
   if (state.arrData.length === 0) {
     plug.style.display = '';
     container.style.display = 'none';
@@ -162,14 +180,21 @@ const render = (state: Istate) => {
   });
 
   table.append(trHeder);
-  arrData.forEach((el: IarrData, i: number) => {
+
+  const iMax = (state.paping * num)
+  const iMin = (iMax - num) < 0 ? 0 : (iMax - num)
+  const arrRender = arrData.slice(iMin, iMax)
+
+  arrRender.forEach((el: IarrData, i: number) => {
+
     const trLine = document.createElement('tr');
     const className = `line_${i}`;
     trLine.className = className;
 
     if (!(state.style).hasOwnProperty(className)) {
       state.style[className] = { height: defaltHeightCell }
-    }
+    };
+
     trLine.style.height = `${state.style[className].height}px`;
     keys.forEach((key: string, i: number) => {
       if (key === 'id') {
@@ -222,7 +247,29 @@ const render = (state: Istate) => {
     buttondReset.removeAttribute('disabled');
   });
 
-  table.append(addData);
+  if (res.length === state.paping) {
+    table.append(addData);
+  }
+
+  const paping = document.createElement('div')
+  paping.className = 'paping'
+  res.forEach((el: number, i: number) => {
+    const span = document.createElement('button');
+    span.innerText = `${i + 1}`
+    if (i + 1 === state.paping) {
+      span.style.backgroundColor = 'grey'
+    }
+    paping.append(span)
+    span.addEventListener('click', () => {
+      if (state.paping === i + 1) {
+        return
+      }
+      state.paping = i + 1
+      render(state)
+    })
+  })
+
+  container.append(paping)
 
   container.style.opacity = '1';
   container.style.transition = '2s';
@@ -253,6 +300,7 @@ const onClickRes = async () => {
   state.arrDataKeys = [];
   buttondDownload.removeAttribute('disabled');
   state.style = {};
+  state.paping= 1;
   render(state);
 };
 
